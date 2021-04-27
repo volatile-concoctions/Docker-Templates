@@ -1,0 +1,32 @@
+FROM php:7.4-fpm
+
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+
+RUN chmod uga+x /usr/local/bin/install-php-extensions && sync && \
+    install-php-extensions curl dom exif fileinfo hash json mbstring mysqli libsodium openssl pcre imagick xml zip filter gd iconv mcrypt simplexml xmlreader zlib ftp pspell redis sockets ssh2 opcache pdo pdo_mysql posix SPL tokenizer date gmagick libxml pear enchant mysqlnd 
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
