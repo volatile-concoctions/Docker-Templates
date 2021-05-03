@@ -2,12 +2,13 @@ version: "3.7"
 
 services:
   apache:
-    container_name: apache
-    image: 'httpd:2.4'
-    ports:
-      - '80:$PORT'
-    restart: unless-stopped
+    container_name: ${COMPOSE_PROJECT_NAME}_apache
+    image: 'httpd:latest'
     user: $PUID:$PGID
+    restart: unless-stopped
+    ports:
+      - 80:80
+      - 443:443
     networks:
       - proxy
     volumes:
@@ -15,13 +16,14 @@ services:
       - ./config/apache:/usr/local/apache2/conf
       - ./config/apache/vhosts:/usr/local/apache2/conf/vhosts
       - ./config/apache/extra:/usr/local/apache2/conf/extra
-      - ./logs:/var/log/apache2
-   
+      - ./config/apache/md:/usr/local/apache2/md
+      - ./logs:/usr/local/apache2/logs
+
   php7:
-    container_name: php7
+    container_name: ${COMPOSE_PROJECT_NAME}_php
     image: php:7.4-fpm-custom
     build:
-      context: ./config/
+      context: ./custom/
       dockerfile: Dockerfile-php7
     restart: unless-stopped
     user: $PUID:$PGID
@@ -29,6 +31,7 @@ services:
       - proxy
     volumes:
       - ./config/php:/usr/local/etc/php
+      - ./site:/var/www/html
 
 networks:
   proxy:
