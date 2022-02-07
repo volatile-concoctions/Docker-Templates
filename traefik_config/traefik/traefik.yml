@@ -1,0 +1,108 @@
+################################################################
+# Traefik pilot configuration
+################################################################
+pilot:
+    token: ""
+################################################################
+# Traefik logs configuration
+################################################################
+log:
+  # (Default: error) DEBUG, INFO, WARN, ERROR, FATAL, PANIC
+  level: DEBUG
+  filePath: /etc/traefik/log/traefik.log
+
+global:
+  checkNewVersion: true
+  sendAnonymousUsage: true 
+################################################################
+# Access logs configuration
+################################################################
+accessLog:
+  filePath: /etc/traefik/log/access.log
+  bufferingSize: 100
+  filters:    
+    statusCodes:
+      - 400-499
+    retryAttempts: true
+    minDuration: 10ms
+################################################################
+# API and dashboard configuration
+################################################################
+api:
+  insecure: false
+  debug: true
+  dashboard: true
+
+entryPoints:
+  http:
+    address: :80
+    http:
+      redirections:
+        entryPoint:
+          to: https
+          scheme: https
+          permanent: true
+        
+  https:
+    address: :443
+    forwardedHeaders:
+      trustedIPs:
+        - "192.168.32.0/20" # Proxy Network Subnet
+        - "172.17.0.0/16" # Host Network Subnet
+        - "173.245.48.0/20" # CLOUDFLARE CDN IPs as per https://www.cloudflare.com/ips/
+        - "103.21.244.0/22" # CLOUDFLARE CDN
+        - "103.22.200.0/22" # CLOUDFLARE CDN
+        - "103.31.4.0/22" # CLOUDFLARE CDN
+        - "141.101.64.0/18" # CLOUDFLARE CDN
+        - "108.162.192.0/18" # CLOUDFLARE CDN
+        - "190.93.240.0/20" # CLOUDFLARE CDN
+        - "188.114.96.0/20" # CLOUDFLARE CDN
+        - "197.234.240.0/22" # CLOUDFLARE CDN
+        - "198.41.128.0/17" # CLOUDFLARE CDN
+        - "162.158.0.0/15" # CLOUDFLARE CDN
+        - "104.16.0.0/13" # CLOUDFLARE CDN
+        - "104.24.0.0/14" # CLOUDFLARE CDN
+        - "172.64.0.0/13" # CLOUDFLARE CDN
+        - "131.0.72.0/22" # CLOUDFLARE CDN
+        - "2400:cb00::/32" # CLOUDFLARE CDN
+        - "2606:4700::/32" # CLOUDFLARE CDN
+        - "2803:f800::/32" # CLOUDFLARE CDN
+        - "2405:b500::/32" # CLOUDFLARE CDN
+        - "2405:8100::/32" # CLOUDFLARE CDN
+        - "2a06:98c0::/29" # CLOUDFLARE CDN
+        - "2c0f:f248::/32" # CLOUDFLARE CDN
+        
+    http:
+      tls:
+        certResolver: letsencrypt
+        
+################################################################
+# Providers
+################################################################
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    exposedByDefault: false
+    swarmMode: false
+    network: proxy
+    httpClientTimeout: 300
+    defaultRule: "Host(`{{ index .Labels "com.docker.compose.service" }}.domain.com`)"
+  file:
+    directory: /etc/traefik/config/
+    watch: true # Only works on top level files
+    debugLogGeneratedTemplate: true
+    
+################################################################
+# SSL Resolvers
+################################################################
+certificatesResolvers:
+  letsencrypt:
+    acme:
+      email: example@example.com
+      storage: /etc/traefik/acme.json
+      dnsChallenge:
+        provider: cloudflare
+        delayBeforeCheck: 90
+        resolvers:
+          - "1.1.1.1:53"
+          - "1.0.0.1:53"

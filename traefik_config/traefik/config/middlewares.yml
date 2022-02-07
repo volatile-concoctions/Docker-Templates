@@ -1,0 +1,26 @@
+http:
+  middlewares:
+    rate-limit:
+      rateLimit:
+        average: 100
+        burst: 50
+    
+    basic-auth:
+      basicAuth:
+        usersFile: "/etc/traefik/config/htpasswd"
+        realm: "Basic Auth"
+    
+    secured-headers:
+      headers:
+        forceSTSHeader: true
+        sslRedirect: true
+        STSPreload: true
+        ContentTypeNosniff: true
+        BrowserXssFilter: true
+        stsIncludeSubdomains: true
+        stsPreload: true
+        stsSeconds: 315360000
+        frameDeny: true
+        customResponseHeaders:
+          X-Robots-Tag: "noarchive,nosnippet,notranslate,noimageindex,"
+        
