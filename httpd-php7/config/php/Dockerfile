@@ -116,6 +116,16 @@ RUN { \
 		echo 'html_errors = Off'; \
 	} > /usr/local/etc/php/conf.d/error-logging.ini
 
+# Other Custom changes
+# https://www.php.net/manual/en/ini.list.php
+RUN { \
+		echo 'file_uploads = On'; \
+		echo 'memory_limit = 128M'; \
+		echo 'upload_max_filesize = 128M'; \
+		echo 'post_max_size = 128M'; \
+		echo 'max_execution_time = 30'; \
+	} > /usr/local/etc/php/conf.d/custom.ini
+
 
 # https://httpd.apache.org/docs/2.4/mod/mod_remoteip.html
 # these IP ranges are reserved for "private" use and should thus *usually* be safe inside Docker
