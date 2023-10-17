@@ -1,9 +1,4 @@
 ################################################################
-# Traefik pilot configuration
-################################################################
-pilot:
-    token: ""
-################################################################
 # Traefik logs configuration
 ################################################################
 log:
@@ -86,7 +81,6 @@ providers:
     swarmMode: false
     network: proxy
     httpClientTimeout: 300
-    defaultRule: "Host(`{{ index .Labels "com.docker.compose.service" }}.domain.com`)"
   file:
     directory: /etc/traefik/config/
     watch: true # Only works on top level files
